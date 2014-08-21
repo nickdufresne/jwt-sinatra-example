@@ -24,6 +24,10 @@ from jwt-sinatra-example/
 
 `ruby app.rb`
 
+You should see sinatra fire up with Webrick.  Point your web browser to:
+
+http://localhost:4567/
+
 This app will load app.rsa and app.rsa.pub as sign and verify keys for the JWT encode and decode
 
 the app.rsa and app.rsa.pub were generated with:
