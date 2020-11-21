@@ -40,7 +40,9 @@
 
       <div class="starter-template">
         <h1>Welcome.  Your have a valid token:</h1>
-        <p class="lead"><%= @token %></p>
+        <pre><%= @token %></pre>
+        <pre>Payload: <%= @payload.inspect %></pre>
+        <pre>Header: <%= @header.inspect %></pre>
         <h2> Your token will expire at: </h2>
         <p><%= @exp.strftime("%m/%d/%y %H:%M:%S %P") %></p>
       </div>

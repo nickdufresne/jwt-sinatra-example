@@ -31,7 +31,7 @@ set :verify_key, verify_key
 enable :sessions
 
 #this is to encrypt the session, but not really necessary just for token because we aren't putting any sensitive info in there
-set :session_secret, 'super secret' 
+set :session_secret, 'super secret 2' 
 
 helpers do
 
@@ -71,14 +71,20 @@ helpers do
   # check the token to make sure it is valid with our public key
   def authorized?
     @token = extract_token
+
+    if @token.nil?
+      session["message"] = "No JWT found in session.  Please log in."
+      return false
+    end
+
     begin
-      payload, header = JWT.decode(@token, settings.verify_key, true)
-      
-      @exp = header["exp"]
+      @payload, @header = JWT.decode(@token, settings.verify_key, true, { algorithm: 'RS256'} )
+
+      @exp = @header["exp"]
 
       # check to see if the exp is set (we don't accept forever tokens)
       if @exp.nil?
-        puts "Access token doesn't have exp set"
+        session["message"] = "No exp set on JWT token."
         return false
       end
 
@@ -86,13 +92,13 @@ helpers do
 
       # make sure the token hasn't expired
       if Time.now > @exp
-        puts "Access token expired"
+        session["message"] = "JWT token expired."
         return false
       end
 
-      @user_id = payload["user_id"]
-
+      @user_id = @payload["user_id"]
     rescue JWT::DecodeError => e
+      session["message"] = "JWT decode error: #{e.message}"
       return false
     end
   end
@@ -104,6 +110,9 @@ get '/' do
 end
 
 get '/login' do
+
+  @message = session["message"]
+  session.delete("message")
   erb :login
 end
 
@@ -120,7 +129,7 @@ post '/login' do
     # normally you might put the user_id in payload, or some other identifying 
     # attributes that we can use to get the current authenticated user's identity
     # on future visists to the site
-    
+
     headers = {
       exp: Time.now.to_i + 20 #expire in 20 seconds
     }
@@ -128,6 +137,7 @@ post '/login' do
     @token = JWT.encode({user_id: 123456}, settings.signing_key, "RS256", headers)
     
     session["access_token"] = @token
+
     redirect to("/")
   else
     @message = "Username/Password failed."
