@@ -30,8 +30,8 @@ set :verify_key, verify_key
 # enable sessions which will be our default for storing the token
 enable :sessions
 
-#this is to encrypt the session, but not really necessary just for token because we aren't putting any sensitive info in there
-set :session_secret, 'super secret 2' 
+# encrypt the sinatra session with a random secret
+set :session_secret, SecureRandom.hex(64)
 
 helpers do
 
@@ -52,7 +52,7 @@ helpers do
     end
 
     # or the form parameter _access_token
-    token = request["access_token"]
+    token = request.params["access_token"]
 
     if token
       return token
