@@ -2,7 +2,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.2.0)
-    jwt (2.2.2)
+    jwt (3.2.0)
+      base64
     logger (1.6.1)
     mustermann (3.0.3)
       ruby2_keywords (~> 0.0.1)
