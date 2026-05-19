@@ -24,7 +24,7 @@ from jwt-sinatra-example/
 
 `ruby app.rb`
 
-You should see sinatra fire up with Webrick.  Point your web browser to:
+You should see sinatra fire up with Puma.  Point your web browser to:
 
 http://localhost:4567/
 
